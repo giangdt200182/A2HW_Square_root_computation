@@ -11,7 +11,15 @@ unsigned int *timer_snaph = 0x81109014;
 
 // Define memory-mapped I/O addresses for LEDs and switches
 unsigned int *ledr = 0x81109030; // LED output register
-unsigned int *sw =   0x81109020; // Switch input register
+unsigned int *sw   =   0x81109020; // Switch input register
+
+// Define memory-mapped PIOs 
+unsigned int *reg_A  = ;
+bool *start          = ;
+bool *done           = ;
+unsigned int *result = ;
+
+
 
 unsigned int timer_period; // Global variable to hold the timer period
 
@@ -49,31 +57,16 @@ unsigned int compute_time_interval(unsigned int v1, unsigned int v2)
 	return time_interval;
 }
 
-// Compute the integer square root of a 64-bit number using an iterative algorithm
+// Compute the integer square root of a 32-bit number using an iterative algorithm
 unsigned int sqrt_root(unsigned int A) {
-    unsigned int D = A;
-    int R = 0;
-    unsigned int Z = 0;
-    unsigned int n = 32;
-    unsigned short i;
-
-    for (i = n - 1; i < n; i--) { // Ensure proper unsigned loop behavior
-        if (R >= 0) {
-            R = R * 4 + (D >> (2 * n - 2)) - (4 * Z + 1);
-        } else {
-            R = R * 4 + (D >> (2 * n - 2)) + (4 * Z + 3);
-        }
-
-        if (R >= 0) {
-            Z = 2 * Z + 1;
-        } else {
-            Z = 2 * Z;
-        }
-
-        D = D * 4;
-    }
-
-    return Z; // Final result
+    int reg_result = 0;
+    *reg_A = A;
+    *start = 1;
+    while ((*done) == 1 ){
+        reg_result = *result; 
+        *start = 0;
+    } 
+    return reg_result;
 }
 
 int main() {
@@ -96,6 +89,7 @@ int main() {
     // Measure time before computation
     first_value = get_timer_value();
 
+    *sig_start=0;
     // Compute square roots for each value in `tab_val`
     for (i = 0; i < 100; i++) {
 			for (j = 0; j < 200; j++) {
