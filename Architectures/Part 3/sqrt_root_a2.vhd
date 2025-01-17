@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
 
-ENTITY square_root IS
+ENTITY sqrt_root_a2 IS
 generic (
 		n           : integer := 16
 		);
@@ -13,9 +13,9 @@ port (
         result              :   out 	std_logic_vector(n-1 downto 0);
 		finished		    :	out		std_logic
 		);
-END square_root;
+END sqrt_root_a2;
 
-architecture a1 of square_root is
+architecture a1 of sqrt_root_a2 is
     type statetype is (IDLE, INIT, COMP, DONE);
     signal state : statetype;
     signal D     : unsigned(2*n-1 downto 0);
