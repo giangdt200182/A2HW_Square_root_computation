@@ -62,8 +62,8 @@ unsigned int sqrt_root(unsigned int A) {
     int reg_result = 0;
     *reg_A = A;
     *start = 1;
-    while ((*done) == 1 ){
-        reg_result = *result; 
+    while ((*done&0x1) == 1 ){
+        reg_result = *result&0xffff; 
         *start = 0;
     } 
     return reg_result;
