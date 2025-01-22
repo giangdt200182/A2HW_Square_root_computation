@@ -73,32 +73,32 @@ architecture top_nios_system_rtl of top_nios_system is
 -------------------------------------------------------------------------------
    component nios_system is
         port (
-            clk_clk       : in    std_logic                     := 'X';             -- clk
-            reset_reset_n : in    std_logic                     := 'X';             -- reset_n
-            sdram_clk_clk : out   std_logic;                                        -- clk
-            sram_DQ       : inout std_logic_vector(15 downto 0) := (others => 'X'); -- DQ
-            sram_ADDR     : out   std_logic_vector(17 downto 0);                    -- ADDR
-            sram_LB_N     : out   std_logic;                                        -- LB_N
-            sram_UB_N     : out   std_logic;                                        -- UB_N
-            sram_CE_N     : out   std_logic;                                        -- CE_N
-            sram_OE_N     : out   std_logic;                                        -- OE_N
-            sram_WE_N     : out   std_logic;                                        -- WE_N
-            sdram_addr    : out   std_logic_vector(11 downto 0);                    -- addr
-            sdram_ba      : out   std_logic_vector(1 downto 0);                     -- ba
-            sdram_cas_n   : out   std_logic;                                        -- cas_n
-            sdram_cke     : out   std_logic;                                        -- cke
-            sdram_cs_n    : out   std_logic;                                        -- cs_n
-            sdram_dq      : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
-            sdram_dqm     : out   std_logic_vector(1 downto 0);                     -- dqm
-            sdram_ras_n   : out   std_logic;                                        -- ras_n
-            sdram_we_n    : out   std_logic;                                        -- we_n
-            sw_export     : in    std_logic_vector(9 downto 0)  := (others => 'X'); -- export
-            ledr_export   : out   std_logic_vector(9 downto 0) ;                     -- export
+			reset_reset_n 	: in    std_logic                     := 'X';             -- reset_n
+            sdram_clk_clk 	: out   std_logic;                                        -- clk
+            sram_DQ       	: inout std_logic_vector(15 downto 0) := (others => 'X'); -- DQ
+            sram_ADDR     	: out   std_logic_vector(17 downto 0);                    -- ADDR
+            sram_LB_N     	: out   std_logic;                                        -- LB_N
+            clk_clk    	   	: in    std_logic                     := 'X';             -- clk
+            sram_UB_N   	: out   std_logic;                                        -- UB_N
+            sram_CE_N     	: out   std_logic;                                        -- CE_N
+            sram_OE_N     	: out   std_logic;                                        -- OE_N
+            sram_WE_N     	: out   std_logic;                                        -- WE_N
+            sdram_addr    	: out   std_logic_vector(11 downto 0);                    -- addr
+            sdram_ba      	: out   std_logic_vector(1 downto 0);                     -- ba
+            sdram_cas_n   	: out   std_logic;                                        -- cas_n
+            sdram_cke     	: out   std_logic;                                        -- cke
+            sdram_cs_n    	: out   std_logic;                                        -- cs_n
+            sdram_dq      	: inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
+            sdram_dqm     	: out   std_logic_vector(1 downto 0);                     -- dqm
+            sdram_ras_n   	: out   std_logic;                                        -- ras_n
+            sdram_we_n    	: out   std_logic;                                        -- we_n
+            sw_export     	: in    std_logic_vector(9 downto 0)  := (others => 'X'); -- export
+            ledr_export   	: out   std_logic_vector(9 downto 0) ;                    -- export
 				
-				A     		  : out   std_logic_vector(31 downto 0)  ; -- export
-            start         : out   std_logic;   
-			   finished      : in    std_logic := 'X';                    -- export				-- export
-				result     	  : in    std_logic_vector(15 downto 0)  := (others => 'X') -- export
+			A_export      	: out   std_logic_vector(31 downto 0)  ; 					-- export
+            start_export  	: out   std_logic;   										-- export
+			finished_export : in    std_logic := 'X';                    				-- export				
+			result_export	: in    std_logic_vector(15 downto 0)  := (others => 'X') -- export
             
         );
     end component nios_system;
@@ -106,12 +106,12 @@ architecture top_nios_system_rtl of top_nios_system is
 -------------------- sqrt root ----------------------
 component sqrt_root_a2 IS
 generic (
-		n           : integer := 16
+		n : integer := 16
 		);
 port (
-		clk, reset, start    : 	in  	std_logic 			            ;
-      A    		        : 	in 		std_logic_vector(2*n-1 downto 0);
-      result              :   out 	std_logic_vector(n-1 downto 0);
+		clk, reset, start   : 	in  	std_logic 			            ;
+      	A    		        : 	in 		std_logic_vector(2*n-1 downto 0);
+      	result              :   out 	std_logic_vector(n-1 downto 0);
 		finished		    :	out		std_logic
 		);
 END component;
@@ -126,9 +126,9 @@ END component;
 -------------------------------------------------------------------------------
 -- Internal Wires
 -- Used to connect the Nios 2 system clock to the non-shifted output of the PLL
-signal			 system_clock : STD_LOGIC;
+signal system_clock : STD_LOGIC;
 
-signal sig_X : std_logic_vector(31 downto 0);
+signal sig_X   : std_logic_vector(31 downto 0);
 signal sig_Res : std_logic_vector(15 downto 0);
 signal sig_done, sig_start, sig_reset : std_logic;
 
@@ -189,21 +189,22 @@ DRAM_LDQM	<= DRAM_DQM(0);
             sdram_dqm     => DRAM_DQM,     --          .dqm
             sdram_ras_n   => DRAM_RAS_N,   --          .ras_n
             sdram_we_n    => DRAM_WE_N,    --          .we_n
-            sw_export     => SW,     --        sw.export
-            ledr_export   => LEDR,    --      ledr.export
-				A       		  => sig_X,
-				start         => sig_start,
-				finished      => sig_done,
-				result        => sig_Res
+            sw_export     => SW,           --        sw.export
+            ledr_export   => LEDR,         --      ledr.export
+				
+			A_export 	  		=> sig_X,
+			start_export  		=> sig_start,
+			finished_export		=> sig_done,
+			result_export       => sig_Res
         );
 
 		  
-sqrt_root:   sqrt_root_a2 
-generic map(n =>16)
-port map (CLOCK_50, sig_reset, sig_start ,sig_X , sig_Res , sig_done		 
-		); 
+	sqrt_root: sqrt_root_a2 
+		generic map(n =>16)
+		port map (CLOCK_50, sig_reset, sig_start ,sig_X , sig_Res , sig_done		 
+				); 
 
-sig_reset <= not KEY(0); -- if reset is active high, else sig_reset <= KEY(0);
+	sig_reset <= not KEY(0); -- if reset is active high, else sig_reset <= KEY(0);
 
 end top_nios_system_rtl;
 

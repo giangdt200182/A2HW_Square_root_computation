@@ -58,20 +58,11 @@ unsigned int compute_time_interval(unsigned int v1, unsigned int v2)
 }
 
 
-unsigned int sqrt_alu(unsigned int x) {
-	return ALT_CI_SQURT_ROOT_0(x);
+// Import input A to custom instruction
+unsigned int sqrt_root(unsigned int A) {
+    return CI_sqrt_root(A);
 }
 
-// Compute the integer square root of a 32-bit number using an iterative algorithm
-unsigned int sqrt_root(unsigned int A) {
-    int reg_result = 0;
-    *reg_A = A;
-    *start = 1;
-    while ((*done&0x1) == 0); //wait until the system finishes the computation
-    reg_result = *result&0xffff; 
-    *start = 0;
-    return reg_result;
-}
 
 int main() {
     unsigned int first_value, second_value, check; // Timer values and result accumulator
